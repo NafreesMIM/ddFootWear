@@ -1,0 +1,103 @@
+-- Create the tables
+
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName NVARCHAR(255) NOT NULL,
+    StockLevel INT NOT NULL
+);
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+    OrderDate DATETIME NOT NULL,
+    OrderStatus NVARCHAR(50) NOT NULL
+);
+
+CREATE TABLE OrderItems (
+    OrderItemID INT PRIMARY KEY,
+    OrderID INT FOREIGN KEY REFERENCES Orders(OrderID),
+    Quantity INT NOT NULL
+);
+
+CREATE TABLE Outlets (
+    OutletID INT PRIMARY KEY,
+    OutletName NVARCHAR(255) NOT NULL
+);
+
+CREATE TABLE OutletStock (
+    OutletStockID INT PRIMARY KEY,
+    OutletID INT FOREIGN KEY REFERENCES Outlets(OutletID),
+    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+    StockLevel INT NOT NULL
+);
+
+CREATE TABLE WebOrders (
+    WebOrderID INT PRIMARY KEY,
+    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+    Quantity INT NOT NULL,
+    OrderDate DATETIME NOT NULL,
+    OrderStatus NVARCHAR(50) NOT NULL
+);
+
+CREATE TABLE PreOrders (
+    PreOrderID INT PRIMARY KEY,
+    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
+    Quantity INT NOT NULL,
+    OrderDate DATETIME NOT NULL,
+    Priority INT NOT NULL
+);
+
+-- Create additional tables for users and authentication
+
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY,
+    Username NVARCHAR(50) NOT NULL,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    Role NVARCHAR(50) NOT NULL
+);
+
+CREATE TABLE AuthenticationTokens (
+    TokenID INT PRIMARY KEY,
+    UserID INT FOREIGN KEY REFERENCES Users(UserID),
+    TokenValue NVARCHAR(255) NOT NULL,
+    ExpiryDateTime DATETIME NOT NULL
+);
+
+
+
+-- Add additional tables for users, authentication, etc., if needed
+
+-- Sample data insertion for testing
+
+INSERT INTO Products (ProductID, ProductName, StockLevel) VALUES
+(1, 'Shoe Model A', 100),
+(2, 'Shoe Model B', 50),
+(3, 'Shoe Model C', 75);
+
+INSERT INTO Outlets (OutletID, OutletName) VALUES
+(1, 'Outlet 1'),
+(2, 'Outlet 2'),
+(3, 'Outlet 3');
+
+INSERT INTO OutletStock (OutletStockID, OutletID, ProductID, StockLevel) VALUES
+(1, 1, 1, 30),
+(2, 1, 2, 20),
+(3, 2, 1, 40),
+(4, 2, 3, 15),
+(5, 3, 2, 25);
+
+
+-- Add sample data for users
+
+INSERT INTO Users (UserID, Username, PasswordHash, Role) VALUES
+(1, 'admin', 'hashed_admin_password', 'Admin'),
+(2, 'outlet_manager', 'hashed_outlet_manager_password', 'OutletManager'),
+(3, 'partner_seller', 'hashed_partner_seller_password', 'PartnerSeller');
+
+-- Add sample data for authentication tokens (for demonstration purposes)
+
+INSERT INTO AuthenticationTokens (TokenID, UserID, TokenValue, ExpiryDateTime) VALUES
+(1, 1, 'admin_token_value', '2024-01-18 12:00:00'),
+(2, 2, 'outlet_manager_token_value', '2024-01-18 15:00:00'),
+(3, 3, 'partner_seller_token_value', '2024-01-19 10:00:00');
+-- Add more sample data for other tables as needed
